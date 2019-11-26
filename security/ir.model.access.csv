@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_unidad-venta_unidad-venta,unidad-venta.unidad-venta,model_unidad-venta_unidad-venta,,1,0,0,0
