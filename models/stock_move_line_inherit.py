@@ -17,6 +17,52 @@ class stock_picking_reports(models.Model):
                                           compute='_calcular_precio_costo')
     valor_debe = fields.Float(string="Debe", readonly=True, store=True,
                                           compute='_calcular_valor_debe')
+    precio_unidad_venta = fields.Float(string="Precio U. Venta", readonly=True, store=True,
+                                          compute='_calcular_precio_unidad_venta')
+
+    valor_haber = fields.Float(string="Haber", readonly=True, store=True,
+                              compute='_calcular_valor_haber')
+
+    valor_saldo = fields.Float(string="Saldo", readonly=True, store=True,
+                              compute='_calcular_valor_saldo')
+
+    @api.multi
+    @api.depends('valor_haber', 'valor_debe')
+    def _calcular_valor_saldo(self):
+        saldo = 0
+        stock_line = self.env['stock.move.line']
+        for rec in self:
+            stock_ids = stock_line.search([('product_id', '=', rec.product_id.id)])
+            if stock_ids:
+                for stock in stock_ids:
+                    saldo += stock.valor_debe
+
+        rec.valor_saldo = saldo - rec.valor_haber
+
+
+
+
+    @api.multi
+    @api.depends('precio_unidad_venta', 'total_unidades_salida')
+    def _calcular_valor_haber(self):
+        for rec in self:
+            if rec.move_id.purchase_line_id.id == False:
+                rec.valor_haber = rec.precio_unidad_venta * rec.total_unidades_salida
+
+    @api.multi
+    @api.depends('qty_done')
+    def _calcular_precio_unidad_venta(self):
+        sale_order = self.env['sale.order']
+        for rec in self:
+            if rec.move_id.purchase_line_id.id == False:
+               total = 0
+               sale_ids = sale_order.search([('name', '=', rec.move_id.origin)])
+               if sale_ids:
+                    for sale in sale_ids:
+                        for sale_line in sale.order_line:
+                          if sale_line.product_id.id == rec.product_id.id:
+                                total += sale_line.price_unit
+        rec.precio_unidad_venta = total
 
     @api.multi
     @api.depends('precio_unidad_compra', 'total_unidades_entrada')

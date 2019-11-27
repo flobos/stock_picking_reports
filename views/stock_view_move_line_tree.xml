@@ -32,6 +32,12 @@
                 <field name="valor_costo_promedio" position="after">
                     <field name="valor_debe"/>
                </field>
+                <field name="valor_debe" position="after">
+                    <field name="valor_haber"/>
+               </field>
+                <field name="valor_haber" position="after">
+                    <field name="valor_saldo"/>
+               </field>
 
             </field>
         </record>
