@@ -23,6 +23,15 @@
                  <field name="total_unidades_salida" position="after">
                     <field name="total_unidades"/>
                </field>
+                <field name="total_unidades" position="after">
+                    <field name="precio_unidad_compra"/>
+               </field>
+                <field name="precio_unidad_compra" position="after">
+                    <field name="valor_costo_promedio"/>
+               </field>
+                <field name="valor_costo_promedio" position="after">
+                    <field name="valor_debe"/>
+               </field>
 
             </field>
         </record>
