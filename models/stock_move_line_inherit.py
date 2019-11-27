@@ -10,40 +10,40 @@ class stock_picking_reports(models.Model):
     total_unidades_salida = fields.Float(string="Unidades Salida", readonly=True, store=True, compute='_calcular_total_unidades_salida')
     total_unidades = fields.Float(string="Total Unidades", readonly=True, store=True,
                                           compute='_calcular_total_unidades_totales')
-    @api.multi
-    @api.depends('qty_done')
-    def _calcular_total_unidades_salida(self):
-        stock_line = self.env['stock.move.line']
-        for rec in self:
-            total = 0
-            stock_ids = stock_line.search([('product_id', '=', rec.product_id.id)])
-            if stock_ids:
-                for stock in stock_ids:
-                    stock_move = self.env['stock.move']
-                    moves_ids = stock_move.search([('id', '=', stock.move_id.id)])
-                    for moves in moves_ids:
-                        if moves.purchase_line_id is None:
-                            total += stock.qty_done
-        rec.total_unidades_salida = total
 
     @api.multi
     @api.depends('qty_done')
     def _calcular_total_unidades_entrada(self):
-        stock_line = self.env['stock.move.line']
-        for rec in self:
-            total = 0
-            stock_ids = stock_line.search([('product_id', '=', rec.product_id.id)])
-            if stock_ids:
-                for stock in stock_ids:
-                    stock_move = self.env['stock.move']
-                    moves_ids = stock_move.search([('id', '=', stock.move_id.id)])
-                    for moves in moves_ids:
-                        if moves.purchase_line_id is not None:
-                            total += stock.qty_done
-        rec.total_unidades_entrada = total
+        if self.move_id.purchase_line_id.id != False:
+            self.total_unidades_entrada = self.qty_done
+
+    @api.multi
+    @api.depends('qty_done')
+    def _calcular_total_unidades_salida(self):
+        if self.move_id.purchase_line_id.id == False:
+           self.total_unidades_salida = self.qty_done
 
     @api.depends('total_unidades_entrada', 'total_unidades_salida')
     def _calcular_total_unidades_totales(self):
-        self.total_unidades = self.total_unidades_entrada - self.total_unidades_salida
+        t_salida = 0
+        t_entrada = 0
+        stock_line = self.env['stock.move.line']
+        for rec in self:
+            stock_ids = stock_line.search([('product_id', '=', rec.product_id.id)])
+            if stock_ids:
+                for stock in stock_ids:
+                    if stock.move_id.purchase_line_id.id != False:
+                        t_entrada += stock.qty_done
+                    if stock.move_id.purchase_line_id.id == False:
+                        t_salida += stock.qty_done
+
+        rec.total_unidades = t_entrada - t_salida
+
+
+
+
+
+
+
 
 
