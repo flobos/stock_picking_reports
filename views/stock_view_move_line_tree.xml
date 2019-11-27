@@ -14,15 +14,15 @@
             <field name="arch" type="xml">
 
                <field name="qty_done" position="after">
-                    <field name="total_unidades"/>
-               </field>
-               <field name="total_unidades" position="after">
                     <field name="total_unidades_entrada"/>
                </field>
+
                 <field name="total_unidades_entrada" position="after">
                     <field name="total_unidades_salida"/>
                </field>
-
+                 <field name="total_unidades_salida" position="after">
+                    <field name="total_unidades"/>
+               </field>
 
             </field>
         </record>
