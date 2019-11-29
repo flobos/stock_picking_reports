@@ -62,7 +62,7 @@ class stock_picking_reports(models.Model):
                         for sale_line in sale.order_line:
                           if sale_line.product_id.id == rec.product_id.id:
                                 total += sale_line.price_unit
-        rec.precio_unidad_venta = total
+                          rec.precio_unidad_venta = total
 
     @api.multi
     @api.depends('precio_unidad_compra', 'total_unidades_entrada')
