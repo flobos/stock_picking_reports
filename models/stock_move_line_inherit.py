@@ -77,16 +77,7 @@ class stock_picking_reports(models.Model):
     def _calcular_precio_costo(self):
         stock_line = self.env['stock.move.line']
         for rec in self:
-            contador_unidades = 0
-            total = 0
-            stock_ids = stock_line.search([('product_id', '=', rec.product_id.id)])
-            if stock_ids:
-                for stock in stock_ids:
-                    if stock.move_id.purchase_line_id.id != False:
-                        total += stock.move_id.purchase_line_id.price_unit * stock.qty_done
-                        contador_unidades += stock.qty_done
-        if total != 0 and  contador_unidades != 0:
-            rec.valor_costo_promedio = round(total / contador_unidades)
+           rec.valor_costo_promedio = rec.product_id.standard_price
 
 
 
